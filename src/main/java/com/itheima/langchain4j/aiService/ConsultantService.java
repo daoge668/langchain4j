@@ -1,5 +1,7 @@
 package com.itheima.langchain4j.aiService;
 
+import dev.langchain4j.memory.chat.ChatMemoryProvider;
+import dev.langchain4j.service.MemoryId;
 import dev.langchain4j.service.SystemMessage;
 import dev.langchain4j.service.UserMessage;
 import dev.langchain4j.service.V;
@@ -10,17 +12,18 @@ import reactor.core.publisher.Flux;
 @AiService(
         wiringMode = AiServiceWiringMode.EXPLICIT,//手动装配
         chatModel = "openAiChatModel",//指定模型
-        streamingChatModel = "openAiStreamingChatModel"
+        streamingChatModel = "openAiStreamingChatModel",
+        chatMemoryProvider = "chatMemoryProvider"
 )
 
 public interface ConsultantService {
 
     @SystemMessage(fromResource = "system.txt")
     @UserMessage("多说一点,以下是问题：{{message}}")
-    public String chat(String message);
+    public String chat(@V("message") @UserMessage String message, @MemoryId String memoryId);
 
     @SystemMessage(fromResource = "system.txt")
     @UserMessage("多说一点,以下是问题：{{message}}")
-    public Flux<String> chatFlux(@V("message") String message);
+    public Flux<String> chatFlux(@V("message") String message,@MemoryId String memoryId);
 
 }
