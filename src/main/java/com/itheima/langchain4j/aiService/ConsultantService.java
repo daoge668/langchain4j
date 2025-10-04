@@ -13,8 +13,9 @@ import reactor.core.publisher.Flux;
         wiringMode = AiServiceWiringMode.EXPLICIT,//手动装配
         chatModel = "openAiChatModel",//指定模型
         streamingChatModel = "openAiStreamingChatModel",
-        chatMemoryProvider = "chatMemoryProvider"
-)
+        chatMemoryProvider = "chatMemoryProvider",
+        contentRetriever = "contentRetriever"//配置向量数据库检索对象
+        )
 
 public interface ConsultantService {
 
