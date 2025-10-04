@@ -2,10 +2,14 @@ package com.itheima.langchain4j.Config;
 
 import com.itheima.langchain4j.aiService.ConsultantService;
 import dev.langchain4j.data.document.Document;
+import dev.langchain4j.data.document.DocumentSplitter;
 import dev.langchain4j.data.document.loader.ClassPathDocumentLoader;
+import dev.langchain4j.data.document.splitter.DocumentSplitters;
+import dev.langchain4j.data.embedding.Embedding;
 import dev.langchain4j.memory.ChatMemory;
 import dev.langchain4j.memory.chat.ChatMemoryProvider;
 import dev.langchain4j.memory.chat.MessageWindowChatMemory;
+import dev.langchain4j.model.embedding.EmbeddingModel;
 import dev.langchain4j.model.openai.OpenAiChatModel;
 import dev.langchain4j.rag.content.retriever.ContentRetriever;
 import dev.langchain4j.rag.content.retriever.EmbeddingStoreContentRetriever;
@@ -24,8 +28,10 @@ import java.util.List;
 public class CommonConfig {
     @Autowired
     private ChatMemoryStore redisChatMemoryStore;
+//    @Autowired
+//    private OpenAiChatModel model;
     @Autowired
-    private OpenAiChatModel model;
+    EmbeddingModel embeddingModel;
 //    @Bean
 //    public ConsultantService consultantService() {
 //        return AiServices.builder(ConsultantService.class)
@@ -33,6 +39,7 @@ public class CommonConfig {
 //                .build();
 //
 //    }
+
     @Bean
     public ChatMemoryProvider chatMemoryProvider() {
         ChatMemoryProvider provider = new ChatMemoryProvider() {
@@ -55,10 +62,12 @@ public class CommonConfig {
         List<Document> documents = ClassPathDocumentLoader.loadDocuments("content");
         //2.创建一个内存中的向量存储实例 提供存储向量数据的容器
         InMemoryEmbeddingStore store = new InMemoryEmbeddingStore();
-
+        DocumentSplitter ds = DocumentSplitters.recursive( 500, 100);
         //3.构建一个EmbeddingStoreIngestor对象,完成文本数据切割,向量化, 存储
         EmbeddingStoreIngestor ingestor = EmbeddingStoreIngestor.builder()
                 .embeddingStore(store)//为构建器设置之前创建的向量存储对象 告诉处理器要将向量存储到哪里
+                .documentSplitter(ds)
+                .embeddingModel(embeddingModel)
                 .build();//创建 EmbeddingStoreIngestor 实例
         ingestor.ingest(documents);//完成从原始文档到向量数据的转换和存储
         return store;//返回配置好的向量存储对象 使其成为 Spring 容器中的 Bean
@@ -71,6 +80,7 @@ public class CommonConfig {
                 .embeddingStore(store)//设置检索器要使用的向量存储对象，告诉检索器从哪里获取数据
                 .minScore(0.5)//设置检索 最小相似度 0.5
                 .maxResults(3)//设置最多返回 3 条检索结果。控制返回结果的数量
+                .embeddingModel(embeddingModel)
                 .build();//完成构建，返回配置好的 ContentRetriever 对象
     }
 
