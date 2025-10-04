@@ -14,8 +14,9 @@ import reactor.core.publisher.Flux;
         chatModel = "openAiChatModel",//指定模型
         streamingChatModel = "openAiStreamingChatModel",
         chatMemoryProvider = "chatMemoryProvider",
-        contentRetriever = "contentRetriever"//配置向量数据库检索对象
-        )
+        contentRetriever = "contentRetriever",//配置向量数据库检索对象
+        tools = "reservationTool"//配置工具对象
+)
 
 public interface ConsultantService {
 

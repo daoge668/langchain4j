@@ -33,3 +33,14 @@ spring:
       port: 6379
       password: 123456
       database: 0
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver #mysql驱动类
+    url: jdbc:mysql://localhost:3307/volunteer?serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: 1234
+
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true #开启驼峰-→下划线 命名映射
+
